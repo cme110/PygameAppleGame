@@ -1,3 +1,7 @@
+'''The module containing all of the constant variables used in the main module,
+plus a function for creating in game text.
+'''
+
 import pygame
 pygame.init()
 
@@ -29,8 +33,17 @@ SECOND = pygame.USEREVENT + 2
 # Creates clock
 clock = pygame.time.Clock()
 
-# Creates text used in the game
 def game_text(string):
+    '''Creates text used in the game and gets the width and height of the text.
+
+    Args:
+        string (str): The text that will be displayed
+
+    Returns:
+        text (pygame.surface.Surface): Text with white background
+        width (int): Width of the text
+        height (int): Height of the text
+    '''
     text = font.render(string, True, BLACK, WHITE)
     width = text.get_width()
     height = text.get_height()

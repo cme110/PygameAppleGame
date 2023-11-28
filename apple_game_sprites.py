@@ -1,3 +1,19 @@
+'''The module containing all the sprites used in the main module.
+
+All classes have these attributes:
+    surf (pygame.surface.Surface): The image representing the sprite
+    rect (pygame.rect.Rect): Position of the sprite when game begins
+Apple class has this additional attribute:
+    speed (int): Falling speed of the apple sprite
+
+All classes have this method:
+    __init__():
+        Initialises the class by assigning attributes
+Player and Apples classes have this additional method:
+    update():
+        Moves the position of the sprite on the screen
+'''
+
 import pygame
 import random
 from apple_game_constants import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -13,6 +29,12 @@ class Player(pygame.sprite.Sprite):
             )
 
     def update(self, pressed_keys):
+        '''Moves sprite's position based on what keys are pressed
+
+        Args:
+            pressed_keys (pygame.key.ScancodeWrapper): Keys being pressed by the
+            player
+        '''
         if pressed_keys[pygame.K_LEFT]:
             self.rect.move_ip(-8,0)
         if pressed_keys[pygame.K_RIGHT]:

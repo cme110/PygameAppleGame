@@ -1,8 +1,12 @@
+'''The main module for running the apple game.
+'''
+
 import pygame
 from apple_game_constants import *
 from apple_game_sprites import *
 pygame.init()
 
+# Assigning sprites and sprite groups
 background = Background()
 tree = Tree()
 player = Player()
@@ -10,10 +14,16 @@ apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
+# Timers for when to add a new apple sprite and when one second has passed
 pygame.time.set_timer(ADDAPPLE, 250)
 pygame.time.set_timer(SECOND, 1000)
 
 def game_loop():
+    '''The main game loop.
+
+    Returns:
+        play_again (bool): Whether the player wants to play the game again
+    '''
     running = True
     paused = False
     game_over = False
@@ -123,13 +133,20 @@ def game_loop():
             
     return play_again
 
-play_again = game_loop()
-while play_again:
-    player = Player()
-    apples = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
-
+def main():
+    '''Runs game loop and continues running game loop while play_again is True.
+    Program stops when play_again is False.
+    '''
     play_again = game_loop()
+    while play_again:
+        player = Player()
+        apples = pygame.sprite.Group()
+        all_sprites = pygame.sprite.Group()
+        all_sprites.add(player)
 
-pygame.quit()
+        play_again = game_loop()
+
+    pygame.quit()
+
+if __name__ == '__main__':
+    main()
