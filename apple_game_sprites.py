@@ -1,5 +1,6 @@
 import pygame
 import random
+from apple_game_constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -13,9 +14,9 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, pressed_keys):
         if pressed_keys[pygame.K_LEFT]:
-            self.rect.move_ip(-5,0)
+            self.rect.move_ip(-8,0)
         if pressed_keys[pygame.K_RIGHT]:
-            self.rect.move_ip(5,0)
+            self.rect.move_ip(8,0)
 
         if self.rect.left < 0:
             self.rect.left = 0
@@ -53,6 +54,3 @@ class Tree(pygame.sprite.Sprite):
         self.surf = pygame.transform.scale(image, (700, 960))
         self.surf.set_colorkey((0,0,0), pygame.RLEACCEL)
         self.rect = self.surf.get_rect()
-
-SCREEN_WIDTH = 1350
-SCREEN_HEIGHT = 600
