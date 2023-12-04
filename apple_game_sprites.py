@@ -3,27 +3,27 @@
 All classes have these attributes:
     surf (pygame.surface.Surface): The image representing the sprite
     rect (pygame.rect.Rect): Position of the sprite when game begins
-Apple class has this additional attribute:
+Apple and GoldenApple classes has this additional attribute:
     speed (int): Falling speed of the apple sprite
 
 All classes have this method:
     __init__():
         Initialises the class by assigning attributes
-Player and Apples classes have this additional method:
+Player, Apple and GoldenApple classes have this additional method:
     update():
         Moves the position of the sprite on the screen
 '''
 
 import pygame
 import random
-from apple_game_constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from apple_game_constants import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        image = pygame.image.load('Images/basket.png').convert()
+        image = pygame.image.load('Images/basket.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (90, 50))
-        self.surf.set_colorkey((0,0,0), pygame.RLEACCEL)
+        self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
             center=((SCREEN_WIDTH/2)-(75/2), SCREEN_HEIGHT-15)
             )
@@ -50,16 +50,27 @@ class Player(pygame.sprite.Sprite):
 class Apple(pygame.sprite.Sprite):
     def __init__(self):
         super(Apple, self).__init__()
-        image = pygame.image.load('Images/apple.png').convert()
+        image = pygame.image.load('Images/apple.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (30, 35))
-        self.surf.set_colorkey((0,0,0), pygame.RLEACCEL)
+        self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
-            center=(random.randint(0, SCREEN_WIDTH), -10)
+            center=(random.randint(15, SCREEN_WIDTH-15), -10)
             )
         self.speed = random.randint(5, 6)
 
     def update(self):
         self.rect.move_ip(0, self.speed)
+
+class GoldenApple(Apple):
+    def __init__(self):
+        super(GoldenApple, self).__init__()
+        image = pygame.image.load('Images/golden_apple.png').convert_alpha()
+        self.surf = pygame.transform.scale(image, (30, 35))
+        self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(random.randint(15, SCREEN_WIDTH-15), -10)
+            )
+        self.speed = random.randint(7, 8)
 
 class Background(pygame.sprite.Sprite):
     def __init__(self):
@@ -72,7 +83,7 @@ class Background(pygame.sprite.Sprite):
 class Tree(pygame.sprite.Sprite):
     def __init__(self):
         super(Tree, self).__init__()
-        image = pygame.image.load('Images/tree.png').convert()
+        image = pygame.image.load('Images/tree.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (700, 960))
-        self.surf.set_colorkey((0,0,0), pygame.RLEACCEL)
+        self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect()

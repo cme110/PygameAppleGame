@@ -2,6 +2,7 @@
 '''
 
 import pygame
+import random
 from apple_game_constants import *
 from apple_game_sprites import *
 pygame.init()
@@ -11,11 +12,14 @@ background = Background()
 tree = Tree()
 player = Player()
 apples = pygame.sprite.Group()
+golden_apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
-# Timers for when to add a new apple sprite and when one second has passed
+# Timers for when to add a new apple and golden apple sprites
+# and for when one second has passed
 pygame.time.set_timer(ADDAPPLE, 250)
+pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
 pygame.time.set_timer(SECOND, 1000)
 
 def game_loop():
@@ -94,13 +98,22 @@ def game_loop():
                     apples.add(new_apple)
                     all_sprites.add(new_apple)
 
+                elif event.type == ADDGOLDEN:
+                    new_apple = GoldenApple()
+                    golden_apples.add(new_apple)
+                    all_sprites.add(new_apple)
+                    pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                    
                 elif event.type == SECOND:
                     time -= 1
 
             if time <= 0:
+                for apple in apples:
+                    apple.kill()
+                for apple in golden_apples:
+                    apple.kill()
                 game_over = True
                     
-            
             screen.fill(BLACK)
             screen.blit(background.surf, background.rect)
             for x in [-300, 500, 250, 10, 800]:
@@ -109,9 +122,10 @@ def game_loop():
             pressed_keys = pygame.key.get_pressed()
             player.update(pressed_keys)
             apples.update()
+            golden_apples.update()
 
             if not game_over:    
-                screen.blit(caught, (0,0))
+                screen.blit(caught, (0, 0))
                 screen.blit(missed, (caught_width+5, 0))
                 screen.blit(percentage, (caught_width+missed_width+10, 0))
                 screen.blit(time_left, (0, caught_height+5))
@@ -125,8 +139,15 @@ def game_loop():
                 if apple.rect.bottom >= SCREEN_HEIGHT+10:
                     apple.kill()
                     missed_apples += 1
+            for apple in golden_apples:
+                if apple.rect.bottom >= SCREEN_HEIGHT+10:
+                    apple.kill()
+                    missed_apples += 3
+                
             if pygame.sprite.spritecollide(player, apples, dokill=True):
                 caught_apples += 1
+            if pygame.sprite.spritecollide(player, golden_apples, dokill=True):
+                caught_apples += 3
                   
             pygame.display.flip()
             clock.tick(70)
@@ -141,6 +162,7 @@ def main():
     while play_again:
         player = Player()
         apples = pygame.sprite.Group()
+        golden_apples = pygame.sprite.Group()
         all_sprites = pygame.sprite.Group()
         all_sprites.add(player)
 
