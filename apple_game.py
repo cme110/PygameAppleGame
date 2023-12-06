@@ -16,12 +16,6 @@ golden_apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
-# Timers for when to add a new apple and golden apple sprites
-# and for when one second has passed
-pygame.time.set_timer(ADDAPPLE, 250)
-pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
-pygame.time.set_timer(SECOND, 1000)
-
 def game_loop():
     '''The main game loop.
 
@@ -55,6 +49,9 @@ def game_loop():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         paused = False
+                        pygame.time.set_timer(ADDAPPLE, 250)
+                        pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                        pygame.time.set_timer(SECOND, 1000)
                         
             pause, pause_width, pause_height = game_text('Press Esc to continue')
             screen.blit(pause, ((SCREEN_WIDTH/2) - (pause_width/2), (SCREEN_HEIGHT/2) - (pause_height/2)))
@@ -155,19 +152,56 @@ def game_loop():
     return play_again
 
 def main():
-    '''Runs game loop and continues running game loop while play_again is True.
-    Program stops when play_again is False.
+    '''Displays start menu, runs game loop when Enter is pressed and continues
+    running game loop while play_again is True. Program stops when play_again is
+    False and/or stop is True.
     '''
-    play_again = game_loop()
-    while play_again:
-        player = Player()
-        apples = pygame.sprite.Group()
-        golden_apples = pygame.sprite.Group()
-        all_sprites = pygame.sprite.Group()
-        all_sprites.add(player)
+    
+    text1 = 'Catch as many apples as you can in your basket'
+    text2 = 'Use the left and right keys to control the basket'
+    text3 = 'Golden apples are worth 3 normal apples'
+    text4 = 'Press Enter to start'
+    aim, aim_width, aim_height = game_text(text1)
+    controls, controls_width, controls_height = game_text(text2)
+    golden, golden_width, golden_height = game_text(text3)
+    start, start_width, start_height = game_text(text4)
 
-        play_again = game_loop()
+    screen.fill(BLACK)
+    screen.blit(background.surf, background.rect)
+    for x in [-300, 500, 250, 10, 800]:
+        screen.blit(tree.surf, (x, -300))
+        
+    screen.blit(aim, ((SCREEN_WIDTH/2) - (aim_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) - controls_height))
+    screen.blit(controls, ((SCREEN_WIDTH/2) - (controls_width/2), (SCREEN_HEIGHT/2) - (controls_height/2)))
+    screen.blit(golden, ((SCREEN_WIDTH/2) - (golden_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height))
+    screen.blit(start, ((SCREEN_WIDTH/2) - (start_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height*3))
 
+    pygame.display.flip()
+
+    stop = False
+    while not stop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                stop = True
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    pygame.time.set_timer(ADDAPPLE, 250)
+                    pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                    pygame.time.set_timer(SECOND, 1000)
+                    play_again = game_loop()
+                    while play_again:
+                        player = Player()
+                        apples = pygame.sprite.Group()
+                        golden_apples = pygame.sprite.Group()
+                        all_sprites = pygame.sprite.Group()
+                        all_sprites.add(player)
+                        pygame.time.set_timer(ADDAPPLE, 250)
+                        pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                        pygame.time.set_timer(SECOND, 1000)
+                        play_again = game_loop()
+
+                    stop = True
     pygame.quit()
 
 if __name__ == '__main__':
