@@ -13,9 +13,10 @@ tree = Tree()
 player = Player()
 apples = pygame.sprite.Group()
 golden_apples = pygame.sprite.Group()
+eaten_apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
-
+    
 def game_loop():
     '''The main game loop.
 
@@ -35,11 +36,11 @@ def game_loop():
         time_left, time_width, time_height = game_text(f'Time left: {time}')
         pause, pause_width, pause_height = game_text('Press Esc to pause')
         
-        if caught_apples == 0 and missed_apples == 0:
-            percentage, _, _ = game_text('Score: 0%')
+        if caught_apples <= 0:
+            percent = 0
         else:
             percent = (caught_apples/(caught_apples + missed_apples)) * 100
-            percentage, _, _ = game_text(f'Score: {percent:.0f}%')
+        percentage, _, _ = game_text(f'Score: {percent:.0f}%')
                 
         if paused:
             for event in pygame.event.get():
@@ -51,6 +52,7 @@ def game_loop():
                         paused = False
                         pygame.time.set_timer(ADDAPPLE, 250)
                         pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                        pygame.time.set_timer(ADDEATEN, 800)
                         pygame.time.set_timer(SECOND, 1000)
                         
             pause, pause_width, pause_height = game_text('Press Esc to continue')
@@ -99,7 +101,12 @@ def game_loop():
                     new_apple = GoldenApple()
                     golden_apples.add(new_apple)
                     all_sprites.add(new_apple)
-                    pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                    pygame.time.set_timer(ADDGOLDEN, random.randint(8000, 13000))
+
+                elif event.type == ADDEATEN:
+                    new_apple = EatenApple()
+                    eaten_apples.add(new_apple)
+                    all_sprites.add(new_apple)
                     
                 elif event.type == SECOND:
                     time -= 1
@@ -108,6 +115,8 @@ def game_loop():
                 for apple in apples:
                     apple.kill()
                 for apple in golden_apples:
+                    apple.kill()
+                for apple in eaten_apples:
                     apple.kill()
                 game_over = True
                     
@@ -120,6 +129,7 @@ def game_loop():
             player.update(pressed_keys)
             apples.update()
             golden_apples.update()
+            eaten_apples.update()
 
             if not game_over:    
                 screen.blit(caught, (0, 0))
@@ -140,11 +150,17 @@ def game_loop():
                 if apple.rect.bottom >= SCREEN_HEIGHT+10:
                     apple.kill()
                     missed_apples += 3
+            for apple in eaten_apples:
+                if apple.rect.bottom >= SCREEN_HEIGHT+10:
+                    apple.kill()
+                    missed_apples -= 1
                 
             if pygame.sprite.spritecollide(player, apples, dokill=True):
                 caught_apples += 1
             if pygame.sprite.spritecollide(player, golden_apples, dokill=True):
                 caught_apples += 3
+            if pygame.sprite.spritecollide(player, eaten_apples, dokill=True):
+                caught_apples -= 1
                   
             pygame.display.flip()
             clock.tick(70)
@@ -159,21 +175,24 @@ def main():
     
     text1 = 'Catch as many apples as you can in your basket'
     text2 = 'Use the left and right keys to control the basket'
-    text3 = 'Golden apples are worth 3 normal apples'
-    text4 = 'Press Enter to start'
+    text3 = '1 golden apple = 3 normal apples'
+    text4 = '1 eaten apple = -1 normal apples'
+    text5 = 'Press Enter to start'
     aim, aim_width, aim_height = game_text(text1)
     controls, controls_width, controls_height = game_text(text2)
     golden, golden_width, golden_height = game_text(text3)
-    start, start_width, start_height = game_text(text4)
+    eaten, eaten_width, eaten_height = game_text(text4)
+    start, start_width, start_height = game_text(text5)
 
     screen.fill(BLACK)
     screen.blit(background.surf, background.rect)
     for x in [-300, 500, 250, 10, 800]:
         screen.blit(tree.surf, (x, -300))
-        
-    screen.blit(aim, ((SCREEN_WIDTH/2) - (aim_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) - controls_height))
-    screen.blit(controls, ((SCREEN_WIDTH/2) - (controls_width/2), (SCREEN_HEIGHT/2) - (controls_height/2)))
-    screen.blit(golden, ((SCREEN_WIDTH/2) - (golden_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height))
+
+    screen.blit(aim, ((SCREEN_WIDTH/2) - (aim_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) - controls_height*2))    
+    screen.blit(controls, ((SCREEN_WIDTH/2) - (controls_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) - controls_height))
+    screen.blit(golden, ((SCREEN_WIDTH/2) - (golden_width/2), (SCREEN_HEIGHT/2) - (controls_height/2)))
+    screen.blit(eaten, ((SCREEN_WIDTH/2) - (eaten_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height))
     screen.blit(start, ((SCREEN_WIDTH/2) - (start_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height*3))
 
     pygame.display.flip()
@@ -187,7 +206,8 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     pygame.time.set_timer(ADDAPPLE, 250)
-                    pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                    pygame.time.set_timer(ADDGOLDEN, random.randint(8000, 13000))
+                    pygame.time.set_timer(ADDEATEN, 800)
                     pygame.time.set_timer(SECOND, 1000)
                     play_again = game_loop()
                     while play_again:
@@ -197,7 +217,8 @@ def main():
                         all_sprites = pygame.sprite.Group()
                         all_sprites.add(player)
                         pygame.time.set_timer(ADDAPPLE, 250)
-                        pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
+                        pygame.time.set_timer(ADDGOLDEN, random.randint(8000, 13000))
+                        pygame.time.set_timer(ADDEATEN, 800)
                         pygame.time.set_timer(SECOND, 1000)
                         play_again = game_loop()
 

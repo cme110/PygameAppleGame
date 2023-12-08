@@ -24,12 +24,13 @@ BLACK = (0, 0, 0)
 # Font and font size of text
 font = pygame.font.SysFont('Arial', 40)
 
-# Creates events for adding an apple and golden apple
+# Creates events for adding each type of apple
 ADDAPPLE = pygame.USEREVENT + 1
 ADDGOLDEN = pygame.USEREVENT + 2
+ADDEATEN = pygame.USEREVENT + 3
 
 # Creates event for when one second has passed
-SECOND = pygame.USEREVENT + 3
+SECOND = pygame.USEREVENT + 4
 
 # Creates clock
 clock = pygame.time.Clock()
