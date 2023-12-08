@@ -3,13 +3,13 @@
 All classes have these attributes:
     surf (pygame.surface.Surface): The image representing the sprite
     rect (pygame.rect.Rect): Position of the sprite when game begins
-Apple and GoldenApple classes has this additional attribute:
+Apple, GoldenApple and EatenApple classes have this additional attribute:
     speed (int): Falling speed of the apple sprite
 
 All classes have this method:
     __init__():
         Initialises the class by assigning attributes
-Player, Apple and GoldenApple classes have this additional method:
+Player, Apple, GoldenApple and EatenApple classes have this additional method:
     update():
         Moves the position of the sprite on the screen
 '''
@@ -71,6 +71,17 @@ class GoldenApple(Apple):
             center=(random.randint(15, SCREEN_WIDTH-15), -10)
             )
         self.speed = random.randint(7, 8)
+
+class EatenApple(Apple):
+    def __init__(self):
+        super(EatenApple, self).__init__()
+        image = pygame.image.load('Images/eaten_apple.png').convert_alpha()
+        self.surf = pygame.transform.scale(image, (30, 35))
+        self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(random.randint(15, SCREEN_WIDTH-15), -10)
+            )
+        self.speed = random.randint(5, 6)
 
 class Background(pygame.sprite.Sprite):
     def __init__(self):
