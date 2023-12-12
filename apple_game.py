@@ -16,6 +16,10 @@ golden_apples = pygame.sprite.Group()
 eaten_apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
+
+caught_apples = 0
+missed_apples = 0
+h_score = 0
     
 def game_loop():
     '''The main game loop.
@@ -27,8 +31,8 @@ def game_loop():
     paused = False
     game_over = False
     play_again = False
-    caught_apples = 0
-    missed_apples = 0
+    global caught_apples
+    global missed_apples
     time = 60
     while running:
         caught, caught_width, caught_height = game_text(f'Caught: {caught_apples}')
@@ -40,8 +44,13 @@ def game_loop():
             percent = 0
         else:
             percent = (caught_apples/(caught_apples + missed_apples)) * 100
-        percentage, _, _ = game_text(f'Score: {percent:.0f}%')
-                
+        percentage, percentage_width, _ = game_text(f'Score: {percent:.0f}%')
+
+        if h_score == 0:
+            highscore, highscore_width, highscore_height = game_text('High Score: N/A')                
+        else:
+            highscore, highscore_width, highscore_height = game_text(f'High Score: {h_score:.0f}%')
+            
         if paused:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -52,7 +61,7 @@ def game_loop():
                         paused = False
                         pygame.time.set_timer(ADDAPPLE, 250)
                         pygame.time.set_timer(ADDGOLDEN, random.randint(5000, 10000))
-                        pygame.time.set_timer(ADDEATEN, 800)
+                        pygame.time.set_timer(ADDEATEN, 900)
                         pygame.time.set_timer(SECOND, 1000)
                         
             pause, pause_width, pause_height = game_text('Press Esc to continue')
@@ -135,6 +144,7 @@ def game_loop():
                 screen.blit(caught, (0, 0))
                 screen.blit(missed, (caught_width+5, 0))
                 screen.blit(percentage, (caught_width+missed_width+10, 0))
+                screen.blit(highscore, (caught_width+missed_width+percentage_width+15, 0))
                 screen.blit(time_left, (0, caught_height+5))
 
             if not game_over and not paused:
@@ -207,7 +217,7 @@ def main():
                 if event.key == pygame.K_RETURN:
                     pygame.time.set_timer(ADDAPPLE, 250)
                     pygame.time.set_timer(ADDGOLDEN, random.randint(8000, 13000))
-                    pygame.time.set_timer(ADDEATEN, 800)
+                    pygame.time.set_timer(ADDEATEN, 900)
                     pygame.time.set_timer(SECOND, 1000)
                     play_again = game_loop()
                     while play_again:
@@ -216,9 +226,19 @@ def main():
                         golden_apples = pygame.sprite.Group()
                         all_sprites = pygame.sprite.Group()
                         all_sprites.add(player)
+
+                        global caught_apples
+                        global missed_apples
+                        global h_score
+                        percent = (caught_apples/(caught_apples + missed_apples)) * 100
+                        if percent > h_score:
+                            h_score = percent
+                        caught_apples = 0
+                        missed_apples = 0
+                        
                         pygame.time.set_timer(ADDAPPLE, 250)
                         pygame.time.set_timer(ADDGOLDEN, random.randint(8000, 13000))
-                        pygame.time.set_timer(ADDEATEN, 800)
+                        pygame.time.set_timer(ADDEATEN, 900)
                         pygame.time.set_timer(SECOND, 1000)
                         play_again = game_loop()
 
