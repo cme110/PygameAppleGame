@@ -22,7 +22,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Font and font size of text
-font = pygame.font.SysFont('Arial', 40)
+font = pygame.font.SysFont('Times New Roman', 40)
 
 # Creates events for adding each type of apple
 ADDAPPLE = pygame.USEREVENT + 1
