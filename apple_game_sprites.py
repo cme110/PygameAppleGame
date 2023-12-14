@@ -21,7 +21,7 @@ from apple_game_constants import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        image = pygame.image.load('Images/basket.png').convert_alpha()
+        image = pygame.image.load('Images and Sounds/basket.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (90, 50))
         self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
 class Apple(pygame.sprite.Sprite):
     def __init__(self):
         super(Apple, self).__init__()
-        image = pygame.image.load('Images/apple.png').convert_alpha()
+        image = pygame.image.load('Images and Sounds/apple.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (30, 35))
         self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
@@ -64,7 +64,7 @@ class Apple(pygame.sprite.Sprite):
 class GoldenApple(Apple):
     def __init__(self):
         super(GoldenApple, self).__init__()
-        image = pygame.image.load('Images/golden_apple.png').convert_alpha()
+        image = pygame.image.load('Images and Sounds/golden_apple.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (30, 35))
         self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
@@ -75,7 +75,7 @@ class GoldenApple(Apple):
 class EatenApple(Apple):
     def __init__(self):
         super(EatenApple, self).__init__()
-        image = pygame.image.load('Images/eaten_apple.png').convert_alpha()
+        image = pygame.image.load('Images and Sounds/eaten_apple.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (30, 35))
         self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect(
@@ -86,7 +86,7 @@ class EatenApple(Apple):
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super(Background, self).__init__()
-        image = pygame.image.load('Images/background.jpg').convert()
+        image = pygame.image.load('Images and Sounds/background.jpg').convert()
         self.surf = pygame.transform.scale(image, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.rect = self.surf.get_rect()
         self.rect.left, self.rect.top = 0, 0
@@ -94,7 +94,7 @@ class Background(pygame.sprite.Sprite):
 class Tree(pygame.sprite.Sprite):
     def __init__(self):
         super(Tree, self).__init__()
-        image = pygame.image.load('Images/tree.png').convert_alpha()
+        image = pygame.image.load('Images and Sounds/tree.png').convert_alpha()
         self.surf = pygame.transform.scale(image, (700, 960))
         self.surf.set_colorkey(BLACK, pygame.RLEACCEL)
         self.rect = self.surf.get_rect()

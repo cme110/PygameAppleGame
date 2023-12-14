@@ -17,6 +17,7 @@ eaten_apples = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
+# Assigning initial scores to zero
 caught_apples = 0
 missed_apples = 0
 h_score = 0
@@ -178,10 +179,13 @@ def game_loop():
     return play_again
 
 def main():
-    '''Displays start menu, runs game loop when Enter is pressed and continues
+    '''Starts background sounds, displays start menu, runs game loop when Enter is pressed and continues
     running game loop while play_again is True. Program stops when play_again is
     False and/or stop is True.
     '''
+    pygame.mixer.init()
+    pygame.mixer.music.load('Images and Sounds/bird_sounds.mp3')
+    pygame.mixer.music.play(loops=-1)
     
     text1 = 'Catch as many apples as you can in your basket'
     text2 = 'Use the left and right keys to control the basket'
@@ -243,6 +247,9 @@ def main():
                         play_again = game_loop()
 
                     stop = True
+                    
+    pygame.mixer.music.stop()
+    pygame.mixer.quit()
     pygame.quit()
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Sets screen name and icon
 pygame.display.set_caption('Apple Game')
-icon = pygame.image.load('Images/apple.png')
+icon = pygame.image.load('Images and Sounds/apple.png')
 pygame.display.set_icon(icon)
 
 # Colours white and black
