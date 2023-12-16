@@ -41,7 +41,7 @@ def game_loop():
         time_left, time_width, time_height = game_text(f'Time left: {time}')
         pause, pause_width, pause_height = game_text('Press Esc to pause')
         
-        if caught_apples <= 0:
+        if caught_apples <= 0 or caught_apples+missed_apples == 0:
             percent = 0
         else:
             percent = (caught_apples/(caught_apples + missed_apples)) * 100
@@ -78,6 +78,11 @@ def game_loop():
                     if event.key == pygame.K_RETURN:
                         play_again = True
                         running = False
+                        
+            pygame.time.set_timer(ADDAPPLE, 0)
+            pygame.time.set_timer(ADDGOLDEN, 0)
+            pygame.time.set_timer(ADDEATEN, 0)
+            pygame.time.set_timer(SECOND, 0)
 
             text1 = "Time's Up!"
             text2 = f'You caught {caught_apples} out of {caught_apples+missed_apples} apples'
@@ -101,6 +106,10 @@ def game_loop():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         paused = True
+                        pygame.time.set_timer(ADDAPPLE, 0)
+                        pygame.time.set_timer(ADDGOLDEN, 0)
+                        pygame.time.set_timer(ADDEATEN, 0)
+                        pygame.time.set_timer(SECOND, 0)
 
                 elif event.type == ADDAPPLE:
                     new_apple = Apple()
