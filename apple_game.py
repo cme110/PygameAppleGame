@@ -23,9 +23,9 @@ missed_apples = 0
 h_score = 0
 
 # Assigning times for each type of apple in each difficulty setting
-EASY = {'apple time': 300, 'golden time': random.randint(5000, 10000), 'eaten time': 400}
+EASY = {'apple time': 350, 'golden time': random.randint(5000, 10000), 'eaten time': 1000}
 NORMAL = {'apple time': 250, 'golden time': random.randint(8000, 13000), 'eaten time': 900}
-HARD = {'apple time': 200, 'golden time': random.randint(11000, 16000), 'eaten time': 1400}
+HARD = {'apple time': 150, 'golden time': random.randint(11000, 16000), 'eaten time': 800}
 
 def game_loop(difficulty):
     '''The main game loop.
@@ -208,6 +208,11 @@ def main():
     next_menu = False
     while not next_menu:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.mixer.quit()
+                pygame.quit()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     next_menu = True
@@ -238,6 +243,11 @@ def main():
     next_menu = False
     while not next_menu:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.mixer.quit()
+                pygame.quit()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_x <= mouse[0] <= easy_x + easy_width and easy_y <= mouse[1] <= easy_y + easy_height:
                     difficulty = EASY
