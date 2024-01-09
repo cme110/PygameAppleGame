@@ -1,6 +1,7 @@
 '''The main module for running the apple game.
 '''
 
+import sys
 import pygame
 import random
 from apple_game_constants import *
@@ -34,7 +35,8 @@ def game_loop(difficulty):
         difficulty (dict): A dictionary of times for each type of apple to appear in the game
 
     Returns:
-        play_again (bool): Whether the player wants to play the game again
+        play_again (bool): Whether the player wants to play the game again with the same
+        difficulty
     '''
     running = True
     paused = False
@@ -59,11 +61,21 @@ def game_loop(difficulty):
             highscore, highscore_width, highscore_height = game_text('High Score: N/A')                
         else:
             highscore, highscore_width, highscore_height = game_text(f'High Score: {h_score:.0f}%')
+
+        if difficulty == EASY:
+            diff, diff_width, diff_height = game_text('Difficulty: Easy')
+        elif difficulty == NORMAL:
+            diff, diff_width, diff_height = game_text('Difficulty: Normal')
+        elif difficulty == HARD:
+            diff, diff_width, diff_height = game_text('Difficulty: Hard')
             
         if paused:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.mixer.music.stop()
+                    pygame.mixer.quit()
+                    pygame.quit()
+                    sys.exit()
                     
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -80,11 +92,17 @@ def game_loop(difficulty):
         elif game_over:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.mixer.music.stop()
+                    pygame.mixer.quit()
+                    pygame.quit()
+                    sys.exit()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         play_again = True
+                        running = False
+                        
+                    if event.key == pygame.K_ESCAPE:
                         running = False
                         
             pygame.time.set_timer(ADDAPPLE, 0)
@@ -95,7 +113,7 @@ def game_loop(difficulty):
             text1 = "Time's Up!"
             text2 = f'You caught {caught_apples} out of {caught_apples+missed_apples} apples'
             text3 = f'Your score is {percent:.0f}%'
-            text4 = 'Press Enter to play again'
+            text4 = 'Press Enter to play again. Press Esc to change difficulty'
             timeup, timeup_width, timeup_height = game_text(text1)
             result, result_width, result_height = game_text(text2)
             score, score_width, score_height = game_text(text3)
@@ -109,7 +127,10 @@ def game_loop(difficulty):
         else:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.mixer.music.stop()
+                    pygame.mixer.quit()
+                    pygame.quit()
+                    sys.exit()
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -163,7 +184,8 @@ def game_loop(difficulty):
                 screen.blit(missed, (caught_width+5, 0))
                 screen.blit(percentage, (caught_width+missed_width+10, 0))
                 screen.blit(highscore, (caught_width+missed_width+percentage_width+15, 0))
-                screen.blit(time_left, (0, caught_height+5))
+                screen.blit(diff, (0, caught_height+5))
+                screen.blit(time_left, (diff_width+5, caught_height+5))
 
             if not game_over and not paused:
                 screen.blit(pause, (SCREEN_WIDTH-pause_width, 0))
@@ -198,7 +220,8 @@ def game_loop(difficulty):
 def main():
     '''Starts background sounds, displays start menu until user presses Enter, displays difficulty menu until
     user clicks on a setting, runs game loop with that difficulty setting when Enter is pressed and continues
-    running game loop while play_again is True. Program stops when play_again is False and/or stop is True.
+    running game loop while play_again is True. If play_again is False, program shows difficulty menu again,
+    and user picks new difficulty. Program stops when user exits the Pygame window.
     '''
     
     pygame.mixer.init()
@@ -212,6 +235,7 @@ def main():
                 pygame.mixer.music.stop()
                 pygame.mixer.quit()
                 pygame.quit()
+                sys.exit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -240,25 +264,59 @@ def main():
         screen.blit(start, ((SCREEN_WIDTH/2) - (start_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height*3))
         pygame.display.flip()
 
-    next_menu = False
-    while not next_menu:
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 pygame.mixer.quit()
                 pygame.quit()
+                sys.exit()
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_x <= mouse[0] <= easy_x + easy_width and easy_y <= mouse[1] <= easy_y + easy_height:
                     difficulty = EASY
-                    print("Easy")
                 elif normal_x <= mouse[0] <= normal_x + normal_width and normal_y <= mouse[1] <= normal_y + normal_height:
                     difficulty = NORMAL
-                    print("Normal")
                 elif hard_x <= mouse[0] <= hard_x + hard_width and hard_y <= mouse[1] <= hard_y + hard_height:
                     difficulty = HARD
-                    print("Hard")
-                next_menu = True
+                    
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.mixer.music.stop()
+                        pygame.mixer.quit()
+                        pygame.quit()
+                        sys.exit()
+
+                pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
+                pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
+                pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
+                pygame.time.set_timer(SECOND, 1000)
+                play_again = game_loop(difficulty)
+                while play_again:
+                    player = Player()
+                    apples = pygame.sprite.Group()
+                    golden_apples = pygame.sprite.Group()
+                    all_sprites = pygame.sprite.Group()
+                    all_sprites.add(player)
+
+                    global caught_apples
+                    global missed_apples
+                    global h_score
+                    percent = (caught_apples/(caught_apples + missed_apples)) * 100
+                    if percent > h_score:
+                        h_score = percent
+                    caught_apples = 0
+                    missed_apples = 0
+                        
+                    pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
+                    pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
+                    pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
+                    pygame.time.set_timer(SECOND, 1000)
+                    play_again = game_loop(difficulty)
+                    
+                caught_apples = 0
+                missed_apples = 0
+                h_score = 0
                     
         mouse = pygame.mouse.get_pos()
                 
@@ -282,45 +340,6 @@ def main():
         normal_y = (SCREEN_HEIGHT/2) - (normal_height/2)
         hard_x = (SCREEN_WIDTH/2) - (normal_width/2) + normal_width+hard_width
         hard_y = (SCREEN_HEIGHT/2) - (hard_height/2)
-        
-    stop = False
-    while not stop:        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                stop = True
-
-        pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
-        pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
-        pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
-        pygame.time.set_timer(SECOND, 1000)
-        play_again = game_loop(difficulty)
-        while play_again:
-            player = Player()
-            apples = pygame.sprite.Group()
-            golden_apples = pygame.sprite.Group()
-            all_sprites = pygame.sprite.Group()
-            all_sprites.add(player)
-
-            global caught_apples
-            global missed_apples
-            global h_score
-            percent = (caught_apples/(caught_apples + missed_apples)) * 100
-            if percent > h_score:
-                h_score = percent
-            caught_apples = 0
-            missed_apples = 0
-            
-            pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
-            pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
-            pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
-            pygame.time.set_timer(SECOND, 1000)
-            play_again = game_loop(difficulty)
-
-        stop = True
-
-    pygame.mixer.music.stop()
-    pygame.mixer.quit()
-    pygame.quit()
 
 if __name__ == '__main__':
     main()
