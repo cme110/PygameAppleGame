@@ -192,7 +192,6 @@ def game_loop(difficulty):
             
             for entity in all_sprites:
                 screen.blit(entity.surf, entity.rect)
-            
             for apple in apples:
                 if apple.rect.bottom >= SCREEN_HEIGHT+10:
                     apple.kill()
@@ -220,9 +219,9 @@ def game_loop(difficulty):
 
 def main():
     '''Starts background sounds, displays start menu until user presses Enter, displays difficulty menu until
-    user clicks on a setting, and after a countdown, it runs game loop with that difficulty setting when Enter
-    is pressed and continues running game loop while play_again is True. If play_again is False, program shows
-    difficulty menu again, and user picks new difficulty. Program stops when user exits the Pygame window.
+    user clicks on a setting, runs game loop with that difficulty setting when Enter is pressed and continues
+    running game loop while play_again is True. If play_again is False, program shows difficulty menu again,
+    and user picks new difficulty. Program stops when user exits the Pygame window.
     '''
     
     pygame.mixer.init()
@@ -264,154 +263,83 @@ def main():
         screen.blit(eaten, ((SCREEN_WIDTH/2) - (eaten_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height))
         screen.blit(start, ((SCREEN_WIDTH/2) - (start_width/2), (SCREEN_HEIGHT/2) - (controls_height/2) + controls_height*3))
         pygame.display.flip()
-        
-    three, two, one, start = False, False, False, False
+
     while True:
-        if three:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.quit()
-                    sys.exit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.mixer.quit()
+                pygame.quit()
+                sys.exit()
+                
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if easy_x <= mouse[0] <= easy_x + easy_width and easy_y <= mouse[1] <= easy_y + easy_height:
+                    difficulty = EASY
+                elif normal_x <= mouse[0] <= normal_x + normal_width and normal_y <= mouse[1] <= normal_y + normal_height:
+                    difficulty = NORMAL
+                elif hard_x <= mouse[0] <= hard_x + hard_width and hard_y <= mouse[1] <= hard_y + hard_height:
+                    difficulty = HARD
                     
-                if event.type == SECOND:
-                    three = False
-                    two = True
-                    
-            countdown, countdown_width, countdown_height = game_text('3')
-            screen.fill(BLACK)
-            screen.blit(background.surf, background.rect)
-            for x in [-300, 500, 250, 10, 800]:
-                screen.blit(tree.surf, (x, -300))
-            screen.blit(countdown, ((SCREEN_WIDTH/2) - (countdown_width/2), (SCREEN_HEIGHT/2) - (countdown_height/2)))
-            pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.mixer.music.stop()
+                        pygame.mixer.quit()
+                        pygame.quit()
+                        sys.exit()
 
-        elif two:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.quit()
-                    sys.exit()
-                    
-                if event.type == SECOND:
-                    two = False
-                    one = True
-
-            countdown, countdown_width, countdown_height = game_text('2')
-            screen.fill(BLACK)
-            screen.blit(background.surf, background.rect)
-            for x in [-300, 500, 250, 10, 800]:
-                screen.blit(tree.surf, (x, -300))
-            screen.blit(countdown, ((SCREEN_WIDTH/2) - (countdown_width/2), (SCREEN_HEIGHT/2) - (countdown_height/2)))
-            pygame.display.flip()
-
-        elif one:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.quit()
-                    sys.exit()
-                    
-                if event.type == SECOND:
-                    one = False
-                    start = True
-                    
-            countdown, countdown_width, countdown_height = game_text('1')
-            screen.fill(BLACK)
-            screen.blit(background.surf, background.rect)
-            for x in [-300, 500, 250, 10, 800]:
-                screen.blit(tree.surf, (x, -300))
-            screen.blit(countdown, ((SCREEN_WIDTH/2) - (countdown_width/2), (SCREEN_HEIGHT/2) - (countdown_height/2)))
-            pygame.display.flip()
-
-        elif start:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.quit()
-                    sys.exit()
-
-            pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
-            pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
-            pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
-            pygame.time.set_timer(SECOND, 1000)
-            play_again = game_loop(difficulty)
-            if play_again:
-                player = Player()
-                apples = pygame.sprite.Group()
-                golden_apples = pygame.sprite.Group()
-                all_sprites = pygame.sprite.Group()
-                all_sprites.add(player)
-
-                global caught_apples
-                global missed_apples
-                global h_score
-                percent = (caught_apples/(caught_apples + missed_apples)) * 100
-                if percent > h_score:
-                    h_score = percent
-                caught_apples = 0
-                missed_apples = 0
-                pygame.time.set_timer(SECOND, 1000)
-                three = True
-                                            
-                '''pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
+                pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
                 pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
                 pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
                 pygame.time.set_timer(SECOND, 1000)
-                play_again = game_loop(difficulty)'''
-            else:
+                play_again = game_loop(difficulty)
+                while play_again:
+                    player = Player()
+                    apples = pygame.sprite.Group()
+                    golden_apples = pygame.sprite.Group()
+                    all_sprites = pygame.sprite.Group()
+                    all_sprites.add(player)
+
+                    global caught_apples
+                    global missed_apples
+                    global h_score
+                    percent = (caught_apples/(caught_apples + missed_apples)) * 100
+                    if percent > h_score:
+                        h_score = percent
+                    caught_apples = 0
+                    missed_apples = 0
+                        
+                    pygame.time.set_timer(ADDAPPLE, difficulty['apple time'])
+                    pygame.time.set_timer(ADDGOLDEN, difficulty['golden time'])
+                    pygame.time.set_timer(ADDEATEN, difficulty['eaten time'])
+                    pygame.time.set_timer(SECOND, 1000)
+                    play_again = game_loop(difficulty)
+                    
                 caught_apples = 0
                 missed_apples = 0
                 h_score = 0
-            start = False
+                    
+        mouse = pygame.mouse.get_pos()
                 
-        else:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.quit()
-                    pygame.quit()
-                    sys.exit()
-                    
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if easy_x <= mouse[0] <= easy_x + easy_width and easy_y <= mouse[1] <= easy_y + easy_height:
-                        difficulty = EASY
-                    elif normal_x <= mouse[0] <= normal_x + normal_width and normal_y <= mouse[1] <= normal_y + normal_height:
-                        difficulty = NORMAL
-                    elif hard_x <= mouse[0] <= hard_x + hard_width and hard_y <= mouse[1] <= hard_y + hard_height:
-                        difficulty = HARD
-                    three = True
-                    pygame.time.set_timer(SECOND, 1000)
-                    
-            mouse = pygame.mouse.get_pos()
-                    
-            easy, easy_width, easy_height = game_text('Easy')
-            normal, normal_width, normal_height = game_text('Normal')
-            hard, hard_width, hard_height = game_text('Hard')
-            choice, choice_width, choice_height = game_text('Click on a difficulty setting to start the game')
-            easy_x = (SCREEN_WIDTH/2) - (normal_width/2) - easy_width*2
-            easy_y = (SCREEN_HEIGHT/2) - (easy_height/2)
-            normal_x = (SCREEN_WIDTH/2) - (normal_width/2)
-            normal_y = (SCREEN_HEIGHT/2) - (normal_height/2)
-            hard_x = (SCREEN_WIDTH/2) - (normal_width/2) + normal_width+hard_width
-            hard_y = (SCREEN_HEIGHT/2) - (hard_height/2)
-            
-            screen.fill(BLACK)
-            screen.blit(background.surf, background.rect)
-            for x in [-300, 500, 250, 10, 800]:
-                screen.blit(tree.surf, (x, -300))
-                
-            if not three and not two and not one and not start:
-                screen.blit(easy, ((SCREEN_WIDTH/2) - (normal_width/2) - easy_width*2, (SCREEN_HEIGHT/2) - (easy_height/2)))
-                screen.blit(normal, ((SCREEN_WIDTH/2) - (normal_width/2), (SCREEN_HEIGHT/2) - (normal_height/2)))
-                screen.blit(hard, ((SCREEN_WIDTH/2) - (normal_width/2) + normal_width+hard_width, (SCREEN_HEIGHT/2) - (hard_height/2)))
-                screen.blit(choice, ((SCREEN_WIDTH/2) - (choice_width/2), (SCREEN_HEIGHT/2) - (choice_height/2) + choice_height*2))
+        easy, easy_width, easy_height = game_text('Easy')
+        normal, normal_width, normal_height = game_text('Normal')
+        hard, hard_width, hard_height = game_text('Hard')
+        choice, choice_width, choice_height = game_text('Click on a difficulty setting to start the game')
+        screen.fill(BLACK)
+        screen.blit(background.surf, background.rect)
+        for x in [-300, 500, 250, 10, 800]:
+            screen.blit(tree.surf, (x, -300))
+        screen.blit(easy, ((SCREEN_WIDTH/2) - (normal_width/2) - easy_width*2, (SCREEN_HEIGHT/2) - (easy_height/2)))
+        screen.blit(normal, ((SCREEN_WIDTH/2) - (normal_width/2), (SCREEN_HEIGHT/2) - (normal_height/2)))
+        screen.blit(hard, ((SCREEN_WIDTH/2) - (normal_width/2) + normal_width+hard_width, (SCREEN_HEIGHT/2) - (hard_height/2)))
+        screen.blit(choice, ((SCREEN_WIDTH/2) - (choice_width/2), (SCREEN_HEIGHT/2) - (choice_height/2) + choice_height*2))
+        pygame.display.flip()
 
-            pygame.display.flip()
-    
+        easy_x = (SCREEN_WIDTH/2) - (normal_width/2) - easy_width*2
+        easy_y = (SCREEN_HEIGHT/2) - (easy_height/2)
+        normal_x = (SCREEN_WIDTH/2) - (normal_width/2)
+        normal_y = (SCREEN_HEIGHT/2) - (normal_height/2)
+        hard_x = (SCREEN_WIDTH/2) - (normal_width/2) + normal_width+hard_width
+        hard_y = (SCREEN_HEIGHT/2) - (hard_height/2)
+
 if __name__ == '__main__':
     main()
